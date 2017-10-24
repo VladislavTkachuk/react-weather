@@ -1,25 +1,34 @@
 import React, { Component } from 'react';
-import WeatherDisplay from './WeatherDisplay';
+import WeatherDisplay from '../components/WeatherDisplay.react';
+import SearchCity from "./SearchCity.react";
 
 import "bootstrap/dist/css/bootstrap.css";
 import { Navbar, NavItem, Nav, Grid, Row, Col } from "react-bootstrap";
 
 const PLACES = [
-  { name: "Kyiv", zip: "03134" },
-  { name: "Vinnitsa", zip: "21000" },
-  { name: "Lviv", zip: "79000" },
-  { name: "Kharkiv", zip: "61100" }
+  { name: "Kyiv" },
+  { name: "Vinnitsa" },
+  { name: "Lviv" },
+  { name: "Kharkiv" }
 ];
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      activePlace: 0
+      activePlace: 0,
+      searchCity: null
     };
+    this.changeCity = this.changeCity.bind(this);
   }
+
+  changeCity(cityName) {
+      this.setState({ activePlace: null, searchCity: cityName });
+  }
+
   render() {
     const activePlace = this.state.activePlace;
+    const searchCity = this.state.searchCity;
     return (
       <div>
         <Navbar>
@@ -31,6 +40,9 @@ class App extends Component {
         </Navbar>
         <Grid>
           <Row>
+            <SearchCity onChangeCity={this.changeCity.bind(this)} />
+          </Row>
+          <Row>
             <Col md={4} sm={4}>
               <h3>Select a city</h3>
               <Nav
@@ -38,7 +50,7 @@ class App extends Component {
                 stacked
                 activeKey={activePlace}
                 onSelect={index => {
-                  this.setState({ activePlace: index });
+                  this.setState({ activePlace: index, searchCity: null });
                 }}
               >
                 {PLACES.map((place, index) => (
@@ -47,7 +59,7 @@ class App extends Component {
               </Nav>
             </Col>
             <Col md={8} sm={8}>
-              <WeatherDisplay key={activePlace} zip={PLACES[activePlace].zip} />
+              <WeatherDisplay key={Date.now()} name={searchCity || PLACES[activePlace].name} />
             </Col>
           </Row>
         </Grid>
